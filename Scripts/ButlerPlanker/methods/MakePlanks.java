@@ -39,12 +39,6 @@ public class MakePlanks extends Node {
 		NPC butler = NPCs.getNearest(Data.demonButler);
 		
 		if (butler != null && butler.isOnScreen()) {
-				
-			sleep(500);
-			/*final Timer timer1 = new Timer(1500);
-			while (timer1.isRunning() && (!Widgets.get(1188, 3).isOnScreen() || !Widgets.get(752, 4).isOnScreen() || !Widgets.get(1188, 3).isOnScreen())) {
-				sleep(250);
-			}*/
 			
 			if (Widgets.get(1188, 3).validate() && Widgets.get(1188, 3).getText().contains("I have returned")) {
 				System.out.println("Talking to butler");
