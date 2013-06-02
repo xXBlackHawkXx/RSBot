@@ -19,6 +19,7 @@ import org.powerbot.core.script.job.state.Tree;
 import org.powerbot.game.api.Manifest;
 import org.powerbot.game.api.methods.Game;
 import org.powerbot.game.api.methods.input.Mouse;
+import org.powerbot.game.api.methods.widget.Bank;
 import org.powerbot.game.api.methods.widget.WidgetCache;
 import org.powerbot.game.api.util.Time;
 import org.powerbot.game.client.Client;
@@ -30,10 +31,12 @@ import org.powerbot.game.client.Client;
 		version = 0.1
 		)
 
-public class HawksGraniteSplitter extends ActiveScript implements PaintListener, MouseListener {
+public abstract class HawksGraniteSplitter extends ActiveScript implements PaintListener, MouseListener {
 
 	private Client client = Bot.client();
-
+	
+	private InventoryMonitor cache;
+	
 	private final Tree script = new Tree(new Node[] {			
 			new Split() ,
 			new Banking(), 		
@@ -42,6 +45,12 @@ public class HawksGraniteSplitter extends ActiveScript implements PaintListener,
 
 	@Override
 	public int loop() {
+		
+
+		if (!Bank.isOpen() && cache.hasChanged()) {
+			cache.onChange();		
+		}
+		
 		final Node stateNode = script.state();
 		if (Game.getClientState() != Game.INDEX_MAP_LOADED) {
 			return 2000;
@@ -60,10 +69,18 @@ public class HawksGraniteSplitter extends ActiveScript implements PaintListener,
 			}
 
 		}
-		return 250;
+		return 100;
 	}
 
 	public void onStart() {
+		
+		cache = new InventoryMonitor() {
+			@Override
+	        public void onChange() {
+	            Variables.halfBlocksMade++;
+	            update();
+	        }
+	    };
 		
 		PriceWrapper priceWrapper = new PriceWrapper();
 		
@@ -106,6 +123,7 @@ public class HawksGraniteSplitter extends ActiveScript implements PaintListener,
 		
 		long runtime = System.currentTimeMillis() - Variables.startTime;
 		String time = Time.format(runtime);
+		int profit = Variables.halfBlocksMade * Variables.halfKgGranitePrice;
 
 		Graphics g2 = (Graphics2D) g;
 
@@ -127,7 +145,7 @@ public class HawksGraniteSplitter extends ActiveScript implements PaintListener,
 			g.drawString("Hawks Granite Splitter", 190, 416);
 			g.setFont(new Font("Arial", 0, 14));
 
-			g.drawString("Money made: ", 65, 458);
+			g.drawString("Money made: " + profit, 65, 458);
 			g.drawString("Per hour: ", 65, 475);
 
 			g.drawString("Runtime: " + time, 320, 458);
@@ -149,5 +167,4 @@ public class HawksGraniteSplitter extends ActiveScript implements PaintListener,
 			g2.drawLine(p.x, 0, p.x, 554);
 		}
 	}
-
 }

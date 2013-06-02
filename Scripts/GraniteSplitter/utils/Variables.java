@@ -16,6 +16,8 @@ public class Variables {
 	public static int twoKgGranitePrice;
 	public static int halfKgGranitePrice;	
 	
+	public static int halfBlocksMade = 0;
+	
 	public static int inventorySpace;
 	
 	public static final int fiveKgGranite = 6983;
